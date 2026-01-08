@@ -1,0 +1,39 @@
+version: '3'
+services:
+  truenas:
+    image: truecharts/truenas:${VERSION}
+    container_name: truenas
+    ports:
+      - "${HOST_PORT}:${CONTAINER_PORT}"
+    volumes:
+      - ${CONFIG_PATH}:/config
+      - ${DATA_PATH}:/storage
+    environment:
+      - TZ=Europe/Madrid
+      - PUID=1000
+      - PGID=1000
+      - APP_NAME=MyTrueNASApp
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DEBUG_MODE=${DEBUG_MODE}
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: truenas_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+
+networks:
+  default:
